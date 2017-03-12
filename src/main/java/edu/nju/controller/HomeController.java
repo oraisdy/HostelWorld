@@ -51,6 +51,7 @@ public class HomeController {
 
 	@RequestMapping(value = "/postRegister", method = RequestMethod.POST)
 	public String postMember(@ModelAttribute("member") Member member) {
+		userService.saveMember(member);
 		return "redirect:/login";
 	}
 
