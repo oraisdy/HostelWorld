@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta charset="utf-8">
+    <link th:href="@{/dist/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/narrow-jumbotron.css}" rel="stylesheet">
+
+</head>
+<body>
+<div class="container">
+    <div class="header clearfix">
+        <nav>
+            <ul class="nav nav-pills float-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/director/applications">审批申请</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/director/bills">支付结算</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/director/statistics">查看统计</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">退出登录</a>
+                </li>
+            </ul>
+        </nav>
+        <h3 class="text-muted">Hostel World <small>总经理</small></h3>
+    </div>
+    <nav class="navbar navbar-light bg-faded">
+        开店申请
+    </nav>
+    <table class="table table-hover" style="text-align: center">
+        <thead>
+        <tr>
+            <th style="text-align: center">申请时间</th>
+            <th style="text-align: center">申请者用户名</th>
+            <th style="text-align: center">客栈名称</th>
+            <th style="text-align: center">联系电话</th>
+            <th style="text-align: center">地址</th>
+            <th style="text-align: center">描述</th>
+            <th style="text-align: center">操作</th>
+            <th style="text-align: center">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="app : ${createApplications}" >
+            <td th:text="${app.time}"></td>
+            <td th:text="${app.username}"></td>
+            <td th:text="${app.name}"></td>
+            <td th:text="${app.contact}"></td>
+            <td th:text="${app.address}"></td>
+            <td th:text="${app.description}"></td>
+            <td><a href="" class="approveCreate" th:attr="appId=${app.id}">通过</a></td>
+            <td><a href="" class="rejectCreate" th:attr="appId=${app.id}">拒绝</a></td>
+        </tr>
+        </tbody>
+    </table>
+    <br>
+    <nav class="navbar navbar-light bg-faded">
+        分店修改资料申请
+    </nav>
+    <table class="table table-hover" style="text-align: center">
+        <thead>
+        <tr>
+            <th style="text-align: center">申请时间</th>
+            <th style="text-align: center">客栈编号</th>
+            <th style="text-align: center">客栈名称</th>
+            <th style="text-align: center">联系电话</th>
+            <th style="text-align: center">地址</th>
+            <th style="text-align: center">描述</th>
+            <th style="text-align: center">操作</th>
+            <th style="text-align: center">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="app : ${modifyApplications}" >
+            <td th:text="${app.time}"></td>
+            <td th:text="${app.branchId}"></td>
+            <td th:text="${app.name}"></td>
+            <td th:text="${app.contact}"></td>
+            <td th:text="${app.address}"></td>
+            <td th:text="${app.description}"></td>
+            <td><a href="" class="approveModify" th:attr="appId=${app.id}">通过</a></td>
+            <td><a href="" class="rejectModify" th:attr="appId=${app.id}">拒绝</a></td>
+        </tr>
+        </tbody>
+    </table>
+    <br>
+    <br>
+
+</div>
+<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script>
+    $(".approveCreate").bind('click',function (e) {
+        e.preventDefault();
+        $.ajax({
+            type:"post",
+            url:"/director/approveCreate",
+            data:{
+                id: e.target.getAttribute('appId'),
+            },
+            success: function (success) {
+                console.log(success);
+                alert("成功");
+            },
+            complete: function () {
+                window.location.href = "/director/applications";
+            },
+        });
+    });
+    $(".approveModify").bind('click',function (e) {
+        e.preventDefault();
+        $.ajax({
+            type:"post",
+            url:"/director/approveModify",
+            data:{
+                id: e.target.getAttribute('appId'),
+            },
+            success: function (success) {
+                console.log(success);
+//                alert("成功");
+            },
+            complete: function () {
+                window.location.href = "/director/applications";
+            },
+        });
+    });
+    $(".rejectCreate").bind('click',function (e) {
+        e.preventDefault();
+        $.ajax({
+            type:"post",
+            url:"/director/rejectCreate",
+            data:{
+                id: e.target.getAttribute('appId'),
+            },
+            success: function (success) {
+                console.log(success);
+//                alert("成功");
+            },
+            complete: function () {
+                window.location.href = "/director/applications";
+            },
+        });
+    });
+    $(".rejectModify").bind('click',function (e) {
+        e.preventDefault();
+        $.ajax({
+            type:"post",
+            url:"/director/rejectModify",
+            data:{
+                id: e.target.getAttribute('appId'),
+            },
+            success: function (success) {
+                console.log(success);
+//                alert("成功");
+            },
+            complete: function () {
+                window.location.href = "/director/applications";
+            },
+        });
+    });
+</script>
+</body>
+</html>

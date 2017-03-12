@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta charset="utf-8">
+    <link th:href="@{/dist/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/narrow-jumbotron.css}" rel="stylesheet">
+
+</head>
+<body>
+<div class="container">
+    <div class="header clearfix">
+        <nav>
+            <ul class="nav nav-pills float-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/member/statistics">查看统计</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/member/modify">修改信息</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">退出登录</a>
+                </li>
+            </ul>
+        </nav>
+        <h3 class="text-muted">Hostel World</h3>
+    </div>
+
+    <nav class="navbar navbar-light bg-faded">
+        会员状态
+    </nav>
+    <br>
+    <div class="form-group row">
+        <label class="col-sm-2">用户名</label>
+        <div class="col-sm-10">
+            <label th:text="${member.name}"></label>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2">注册日期</label>
+        <div class="col-sm-10">
+            <label th:text="${member.registerAt}"></label>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2">会员状态</label>
+        <div class="col-sm-4">
+            <label th:text="${member.cancelled}?'停止':(${member.active}?'已激活':'暂停/未激活')"></label>
+        </div>
+        <div class="col-sm-6" th:switch="${member.cancelled}">
+            <button th:case="false" class="btn btn-primary" id="suspend">停止</button>
+            <button th:case="true" class="btn btn-primary" id="activate">激活</button>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2"> 余  额 </label>
+        <div class="col-sm-4">
+            <label th:text=|${member.savings}元|></label>
+        </div>
+        <div class="col-sm-6 form-inline">
+            <input id="charge-amount" class="form-control mb-2 mr-sm-2 mb-sm-0" type="number" value="1000">
+            <button class="btn btn-primary" id="charge">充值</button>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2"> 积  分 </label>
+        <div class="col-sm-4">
+            <label th:text="${member.credit}"></label>
+        </div>
+        <div class="col-sm-6">
+            <button class="btn btn-primary" id="exchange">兑换</button>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2"> 优  惠  </label>
+        <div class="col-sm-10">
+            <label th:text="${level}"></label>
+        </div>
+    </div>
+
+    <br>
+    <nav class="navbar navbar-light bg-faded">
+        修改资料
+    </nav>
+    <br>
+    <form th:attr="action=@{/member/postModify}" th:object="${member}" method="post">
+        <div class="form-group row">
+            <label for="card-field" class="col-sm-2 col-form-label">银行卡</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="card-field" th:field="*{bankCard}">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="offset-sm-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">提交修改</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script>
+    $("#exchange").bind('click',function (e) {
+        e.preventDefault();
+        $.ajax({
+            type:"post",
+            url:"/member/exchangeBalance",
+            success: function (success) {
+//                alert("成功兑换");
+            },
+            complete: function () {
+                window.location.href = "/memberModify";
+            },
+        });
+    });
+    $("#suspend").bind('click',function (e) {
+        e.preventDefault();
+        $.ajax({
+            type:"post",
+            url:"/member/cancelMembership",
+            success: function (success) {
+//                alert("成功取消资格");
+            },
+            complete: function () {
+                window.location.href = "/member/modify";
+            },
+        });
+    });
+    $("#activate").bind('click',function (e) {
+        e.preventDefault();
+        $.ajax({
+            type:"post",
+            url:"/member/activateMembership",
+            success: function (success) {
+            },
+            complete: function () {
+                window.location.href = "/member/modify";
+            },
+        });
+    });
+    $("#charge").bind('click',function (e) {
+        e.preventDefault();
+        console.log($('#charge-amount').val());
+        $.ajax({
+            type:"post",
+            url:"/member/charge",
+            data: { amount:$('#charge-amount').val()},
+            success: function (success) {
+                console.log(success);
+            },
+            complete: function () {
+                window.location.href = "/member/modify";
+            },
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta charset="utf-8">
+    <link th:href="@{/dist/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/narrow-jumbotron.css}" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="header clearfix">
+        <nav>
+            <ul class="nav nav-pills float-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/manager/accommodate">入住/退房/结账</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/manager/makeRoomPlan">发布房间计划</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/manager/statistics">查看统计</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/manager/modify">修改信息</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">退出登录</a>
+                </li>
+            </ul>
+        </nav>
+        <h3 class="text-muted">Hostel World <small th:text=${branch.name}></small></h3>
+    </div>
+    <nav class="navbar navbar-light bg-faded">
+        <form class="form-inline" method="get" action="/manager/accommodate">
+            <div class="mb-2 mr-sm-2 mb-sm-0">
+                <input name="memberId" type="text" class="form-control" placeholder="根据会员ID检索订购" aria-describedby="basic-addon1">
+            </div>
+            <button type="submit" class="btn btn-primary">查询</button>
+        </form>
+    </nav>
+    <table class="table table-hover" style="text-align: center">
+        <thead>
+        <tr>
+            <!--<th style="text-align: center">日期</th>-->
+            <th style="text-align: center">房号</th>
+            <th style="text-align: center">类型</th>
+            <th style="text-align: center">价格</th>
+            <th style="text-align: center">顾客编号</th>
+            <th style="text-align: center">预约入住时间</th>
+            <th style="text-align: center">操作</th>
+            <th style="text-align: center">预约离店时间</th>
+            <th style="text-align: center">操作</th>
+            <th style="text-align: center">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="booking : ${bookings}" >
+            <td th:text="${booking.room.info.number}"></td>
+            <td th:text="${booking.room.info.type}"></td>
+            <td th:text=|${booking.total}元|></td>
+            <td th:text="${#numbers.formatDecimal(booking.member.id, 7, 'DEFAULT', 0, 'DEFAULT')}"></td>
+            <td th:text="${booking.room.startDate}"></td>
+            <td th:switch="${booking.checkIn}">
+                <a th:case="false" href="" th:attr="bookingId=${booking.id}" th:class="${booking.room.startDate.getTime()}<${#dates.createNow().getTime()}?'checkIn':''"  th:text="${booking.room.startDate.getTime()}<${#dates.createNow().getTime()}?'入住':''"></a>
+                <a th:case="true" >已入住</a>
+            </td>
+            <td th:text="${booking.room.leaveDate}"></td>
+            <td th:switch="${booking.checkOut}">
+                <a th:case="false" href="" th:attr="bookingId=${booking.id}" th:class="${booking.checkIn} and ${booking.room.leaveDate.getTime()}>${#dates.createNow().getTime()}?'checkOut':''"  th:text="${booking.checkIn} and ${booking.room.leaveDate.getTime()}>${#dates.createNow().getTime()}?'退房':''"></a>
+                <a th:case="true" >已离店</a>
+            </td>
+            <td th:switch="${booking.bill}">
+                <div th:case="null" >
+                    结账:
+                    <a href="" th:attr="bookingId=${booking.id}" class="payByCash" >现金</a>|<a href="" th:attr="bookingId=${booking.id}" class="payByMembership" >会员卡</a>
+                </div>
+
+                <a th:case="*" th:text="'已'+${booking.bill.payment}+'支付'"></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script>
+    $(".checkIn").bind('click',function (e) {
+        e.preventDefault();
+        $.ajax({
+            type:"post",
+            url:"/manager/checkIn",
+            data:{
+                id: e.target.getAttribute('bookingId'),
+            },
+            success: function (success) {
+                console.log(success);
+//                alert("成功入住");
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            },
+            complete: function () {
+                window.location.href = "/manager/accommodate";
+            },
+        });
+    });
+    $(".checkOut").bind('click',function (e) {
+        e.preventDefault();
+        $.ajax({
+            type:"post",
+            url:"/manager/checkOut",
+            data:{
+                id: e.target.getAttribute('bookingId'),
+            },
+            success: function (success) {
+                console.log(success);
+//                alert("成功退房");
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            },
+            complete: function () {
+                window.location.href = "/manager/accommodate";
+            },
+        });
+    });
+    $(".payByCash").bind('click',function (e) {
+        e.preventDefault();
+        $.ajax({
+            type:"post",
+            url:"/manager/payBillByCash",
+            data:{
+                id: e.target.getAttribute('bookingId'),
+            },
+            success: function (bill) {
+                if (typeof bill === 'string')
+                    alert(bill);
+                else
+                alert("成功支付! \n房间号："+bill.room.info.number+"\n类型："+bill.room.info.type+"\n总价："+bill.total+"\n顾客id："+bill.memberId+"\n支付方式："+bill.payment);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            },
+            complete: function () {
+                window.location.href = "/manager/accommodate";
+            },
+        });
+    });
+    $(".payByMembership").bind('click',function (e) {
+        e.preventDefault();
+        $.ajax({
+            type:"post",
+            url:"/manager/payBillByMembership",
+            data:{
+                id: e.target.getAttribute('bookingId'),
+            },
+            success: function (bill) {
+                if (typeof bill === 'string')
+                    alert(bill);
+                else
+                alert("成功支付! \n房间号："+bill.room.info.number+"\n类型："+bill.room.info.type+"\n总价："+bill.total+"\n顾客id："+bill.memberId+"\n支付方式："+bill.payment);
+            },
+            complete: function () {
+                window.location.href = "/manager/accommodate";
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            },
+        });
+    });
+</script>
+
+</html>

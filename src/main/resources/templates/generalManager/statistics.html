@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta charset="utf-8">
+    <link th:href="@{/dist/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/narrow-jumbotron.css}" rel="stylesheet">
+
+</head>
+<body>
+<div class="container">
+    <div class="header clearfix">
+        <nav>
+            <ul class="nav nav-pills float-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/director/applications">审批申请</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/director/bills">支付结算</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/director/statistics">查看统计</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">退出登录</a>
+                </li>
+            </ul>
+        </nav>
+        <h3 class="text-muted">Hostel World <small>总经理</small></h3>
+    </div>
+
+    <nav class="navbar navbar-light bg-faded">
+        <form class="form-inline" th:attr="action=@{/director/statistics}" method="get">
+            <label for="id-input" class="col-form-label mb-2 mr-sm-2 mb-sm-0">分店编号</label>
+            <div class="mb-2 mr-sm-2 mb-sm-0">
+                <select class="form-control" name="branchId" id="id-input">
+                    <option th:each="i, iStat : ${idList}" th:value="${i}" th:text="${i}"></option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">查询</button>
+        </form>
+    </nav>
+    <nav class="navbar navbar-light bg-faded" th:text=|预订情况:共${#lists.size(bookings)}个预订|>
+        预订记录
+    </nav>
+    <table class="table table-hover" style="text-align: center">
+        <thead>
+        <tr>
+            <th style="text-align: center">日期</th>
+            <th style="text-align: center">房号</th>
+            <th style="text-align: center">顾客</th>
+            <th style="text-align: center">类型</th>
+            <th style="text-align: center">价格</th>
+            <th style="text-align: center">住宿日期</th>
+            <!--<th style="text-align: center">入住状态</th>-->
+            <!--<th style="text-align: center">支付状态</th>-->
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="booking : ${bookings}" >
+            <td th:text="${booking.date}"></td>
+            <td th:text="${booking.room.info.number}"></td>
+            <td th:text="${#numbers.formatDecimal(booking.member.id, 7, 'DEFAULT', 0, 'DEFAULT')}"></td>
+            <td th:text="${booking.room.info.type}"></td>
+            <td th:text=|${booking.total}元|></td>
+            <td th:text="${booking.room.startDate}+' ~ '+${booking.room.leaveDate}"></td>
+            <!--<td th:text="${booking.checkIn}?'已入住':'未入住'"></td>-->
+            <!--<td th:switch="${booking.bill}">-->
+            <!--<p th:case="null">未支付</p>-->
+            <!--<p th:case="*" th:text="'已通过'+${booking.bill.payment}+'支付'"></p>-->
+            <!--</td>-->
+            <!--<td th:switch="not ${booking.bill} and ${booking.room.startDate.getTime()}>${#dates.createNow().getTime()}">-->
+            <!--<a th:case="true" href="" th:attr="bookingId=${booking.id}" class="cancelBooking" >取消预订</a>-->
+            <!--</td>-->
+        </tr>
+        </tbody>
+    </table>
+    <br>
+    <nav class="navbar navbar-light bg-faded" th:text=|入住情况:共${#lists.size(checkIns)}个入住|>
+        入住记录
+    </nav>
+    <table class="table table-hover" style="text-align: center">
+        <thead>
+        <tr>
+            <th style="text-align: center">日期</th>
+            <th style="text-align: center">房号</th>
+            <th style="text-align: center">顾客</th>
+            <th style="text-align: center">类型</th>
+            <th style="text-align: center">价格</th>
+            <th style="text-align: center">住宿日期</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="booking : ${checkIns}" >
+            <td th:text="${booking.checkInTime}"></td>
+            <td th:text="${booking.room.info.number}"></td>
+            <td th:text="${#numbers.formatDecimal(booking.member.id, 7, 'DEFAULT', 0, 'DEFAULT')}"></td>
+            <td th:text="${booking.room.info.type}"></td>
+            <td th:text=|${booking.total}元|></td>
+            <td th:text="${booking.room.startDate}+' ~ '+${booking.room.leaveDate}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <br>
+    <nav class="navbar navbar-light bg-faded">
+        消费记录
+    </nav>
+    <table class="table table-hover" style="text-align: center">
+        <thead>
+        <tr>
+            <th style="text-align: center">日期</th>
+            <th style="text-align: center">房号</th>
+            <th style="text-align: center">顾客</th>
+            <th style="text-align: center">类型</th>
+            <th style="text-align: center">价格</th>
+            <th style="text-align: center">住宿日期</th>
+            <th style="text-align: center">支付方式</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="bill : ${bills}" >
+            <td th:text="${bill.date}"></td>
+            <td th:text="${bill.room.info.number}"></td>
+            <td th:text="${#numbers.formatDecimal(bill.memberId, 7, 'DEFAULT', 0, 'DEFAULT')}"></td>
+            <td th:text="${bill.room.info.type}"></td>
+            <td th:text=|${bill.total}元|></td>
+            <td th:text="${bill.room.startDate}+' ~ '+${bill.room.leaveDate}"></td>
+            <td th:text="${bill.payment}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <br>
+
+</div>
+<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+
+</body>
+</html>

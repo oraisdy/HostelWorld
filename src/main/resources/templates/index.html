@@ -1,0 +1,113 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Hostel World</title>
+    <meta charset="utf-8">
+    <link th:href="@{/dist/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/narrow-jumbotron.css}" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="header clearfix" sec:authorize="not isAuthenticated()">
+        <nav>
+            <ul class="nav nav-pills float-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/register">办理会员</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/openShop">申请开店</a>
+                </li>
+            </ul>
+        </nav>
+        <h3 class="text-muted">Hostel World</h3>
+    </div>
+    <div class="header clearfix" sec:authorize="hasRole('ROLE_MANAGER')">
+        <nav>
+            <ul class="nav nav-pills float-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/manager/accommodate">入住/退房/结账</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/manager/makeRoomPlan">发布房间计划</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/manager/statistics">查看统计</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/manager/modify">修改信息</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">退出登录</a>
+                </li>
+            </ul>
+        </nav>
+        <h3 class="text-muted">Hostel World </h3>
+    </div>
+    <div class="header clearfix" sec:authorize="hasRole('ROLE_DIRECTOR')">
+        <nav>
+            <ul class="nav nav-pills float-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/director/applications">审批申请</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/director/bills">支付结算</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/director/statistics">查看统计</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">退出登录</a>
+                </li>
+            </ul>
+        </nav>
+        <h3 class="text-muted">Hostel World <small>总经理</small></h3>
+    </div>
+    <div class="header clearfix" sec:authorize="hasRole('ROLE_MEMBER')">
+        <nav>
+            <ul class="nav nav-pills float-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/member/statistics">查看统计</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/member/modify">修改信息</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">退出登录</a>
+                </li>
+            </ul>
+        </nav>
+        <h3 class="text-muted">Hostel World</h3>
+    </div>
+    <div class="jumbotron">
+        <h1 class="display-3">Hostel World</h1>
+        <p class="lead"></p>
+        <p sec:authorize="not isAuthenticated()"><a class="btn btn-lg btn-success" href="/login" role="button">登 录</a></p>
+    </div>
+
+    <div class="row marketing" >
+        <div class="col-lg-6" th:each="branch : ${branches}">
+            <h4><a th:href=|/branch/${branch.id}| th:text="${branch.name}"></a></h4>
+            <p th:text=|地址：${branch.address}|></p>
+            <p th:text=|描述：${branch.description}|></p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; Company 2017</p>
+    </footer>
+
+</div>
+</body>
+</html>

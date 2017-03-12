@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta charset="utf-8">
+    <link th:href="@{/dist/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/narrow-jumbotron.css}" rel="stylesheet">
+
+</head>
+<body>
+<div class="container">
+    <div class="header clearfix" sec:authorize="not isAuthenticated()">
+        <nav>
+            <ul class="nav nav-pills float-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/register">办理会员</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/openShop">申请开店</a>
+                </li>
+            </ul>
+        </nav>
+        <h3 class="text-muted">Hostel World</h3>
+    </div>
+    <div class="header clearfix" sec:authorize="hasRole('ROLE_MANAGER')">
+        <nav>
+            <ul class="nav nav-pills float-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/manager/accommodate">入住/退房/结账</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/manager/makeRoomPlan">发布房间计划</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/manager/statistics">查看统计</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/manager/modify">修改信息</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">退出登录</a>
+                </li>
+            </ul>
+        </nav>
+        <h3 class="text-muted">Hostel World </h3>
+    </div>
+    <div class="header clearfix" sec:authorize="hasRole('ROLE_DIRECTOR')">
+        <nav>
+            <ul class="nav nav-pills float-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/director/applications">审批申请</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/director/bills">支付结算</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/director/statistics">查看统计</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">退出登录</a>
+                </li>
+            </ul>
+        </nav>
+        <h3 class="text-muted">Hostel World <small>总经理</small></h3>
+    </div>
+    <div class="header clearfix" sec:authorize="hasRole('ROLE_MEMBER')">
+        <nav>
+            <ul class="nav nav-pills float-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/member/statistics">查看统计</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/member/modify">修改信息</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">退出登录</a>
+                </li>
+            </ul>
+        </nav>
+        <h3 class="text-muted">Hostel World</h3>
+    </div>
+    <p th:text=${branch.name}></p>
+    <p th:text=${branch.address}></p>
+    <p th:text=${branch.contact}></p>
+    <p th:text=${branch.description}></p>
+
+    <nav class="navbar navbar-light bg-faded">
+        <form class="form-inline" th:attr="action=@{/branch/{id}(id=${branch.id})}" th:object="${range}" method="post">
+            <label for="from-date-input" class="col-form-label mb-2 mr-sm-2 mb-sm-0">入住日期</label>
+            <div class="mb-2 mr-sm-2 mb-sm-0">
+                <input th:field="*{from}" class="form-control" type="date" name="from" id="from-date-input">
+            </div>
+            <label for="to-date-input" class=" col-form-label mb-2 mr-sm-2 mb-sm-0">退房日期</label>
+            <div class="mb-2 mr-sm-2 mb-sm-0">
+                <input th:field="*{to}" class="form-control" type="date" name="to" id="to-date-input">
+            </div>
+            <button type="submit" class="btn btn-primary">查询</button>
+        </form>
+    </nav>
+    <br>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>类型</th>
+            <th>价格</th>
+            <th>房间</th>
+            <th></th><th></th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr th:each="stock : ${rooms}">
+            <td th:text="${stock.info.type}"></td>
+            <td th:text=|${stock.info.price}元/天|></td>
+            <td th:text="${stock.info.number}"></td>
+            <td><a th:attr="roomId=${stock.id}" class="booking" href="#">预订</a></td>
+            <td><a th:attr="roomId=${stock.id}" class="bookAndPay" href="#">预订并付款</a></td>
+        </tr>
+        </tbody>
+    </table>
+    <br>
+</div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var branch = [[${branch.id}]];
+    var message = [[${rooms}]];
+    console.log(message);
+    /*]]>*/
+</script>
+<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script>
+    $(".booking").bind('click',function (e) {
+        e.preventDefault();
+        $.ajax({
+            type:"post",
+            url:"/member/bookRoom",
+            data:{
+                from: $("#from-date-input").val(),
+                to:$("#to-date-input").val(),
+                room: e.target.getAttribute('roomId'),
+            },
+            success: function (booking, statusText, xhr, $form) {
+                console.log(statusText);
+                console.log(xhr);
+                console.log($form);
+                if (typeof booking === 'string')
+                    alert(booking);
+                else
+                    alert("成功预订房间! \n房间号："+booking.room.info.number+"\n类型："+booking.room.info.type+"\n总价："+booking.total+"\n入住时间："+booking.room.startDate+"\n退房时间："+booking.room.leaveDate);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            },
+            complete: function () {
+                window.location.href = "/branch/"+branch;
+            },
+        });
+    });
+    $(".bookAndPay").bind('click',function (e) {
+        e.preventDefault();
+        $.ajax({
+            type:"post",
+            url:"/member/bookRoomAndPay",
+            data:{
+                from: $("#from-date-input").val(),
+                to:$("#to-date-input").val(),
+                room: e.target.getAttribute('roomId'),
+            },
+            success: function (booking) {
+                console.log(booking);
+                if (typeof booking === 'string')
+                    alert(booking);
+                else
+                    alert("成功预订房间并通过会员卡支付! \n房间号："+booking.room.info.number+"\n类型："+booking.room.info.type+"\n总价："+booking.total+"\n入住时间："+booking.room.startDate+"\n退房时间："+booking.room.leaveDate);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            },
+            complete: function () {
+                window.location.href = "/branch/"+branch;
+            },
+        });
+    });
+</script>
+</body>
+</html>
