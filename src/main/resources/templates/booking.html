@@ -92,10 +92,10 @@
         </nav>
         <h3 class="text-muted">Hostel World</h3>
     </div>
-    <p th:text=${branch.name}></p>
-    <p th:text=${branch.address}></p>
-    <p th:text=${branch.contact}></p>
-    <p th:text=${branch.description}></p>
+    <p th:text="'名称:  '+${branch.name}"></p>
+    <p th:text="'地址:  '+${branch.address}"></p>
+    <p th:text="'电话:  '+${branch.contact}"></p>
+    <p th:text="'描述:  '+${branch.description}"></p>
 
     <nav class="navbar navbar-light bg-faded">
         <form class="form-inline" th:attr="action=@{/branch/{id}(id=${branch.id})}" th:object="${range}" method="post">
