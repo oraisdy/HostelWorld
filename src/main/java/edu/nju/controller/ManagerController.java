@@ -1,10 +1,7 @@
 package edu.nju.controller;
 
 import edu.nju.config.SecurityConfig;
-import edu.nju.entity.Branch;
-import edu.nju.entity.ModifyBranch;
-import edu.nju.entity.Payment;
-import edu.nju.entity.RoomInfo;
+import edu.nju.entity.*;
 import edu.nju.service.BookingServiceImpl;
 import edu.nju.service.BranchServiceImpl;
 import edu.nju.service.BusinessServiceImpl;
@@ -74,6 +71,7 @@ public class ManagerController {
         model.addAttribute("branch", branch);
         model.addAttribute("plans", roomService.findAllRoomPlanByBranch(branch.getId()));
         model.addAttribute("form",new RoomInfo());
+        model.addAttribute("types", RoomType.values());
         return viewPrefix+"/plan";
     }
 

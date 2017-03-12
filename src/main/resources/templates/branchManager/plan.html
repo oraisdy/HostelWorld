@@ -48,7 +48,10 @@
         <input name="number" th:value="${plan.number}" hidden>
         <label class="col-sm-3 col-form-label"  th:text="${plan.number}"></label>
             <div class="col-sm-3">
-                <input type="text" class="form-control" id="type-field" name="type" th:value="${plan.type}">
+                <select type="text" class="form-control" id="type-field" name="type" >
+                    <option disabled="true" th:text="${plan.type}" th:value="${plan.type}" selected></option>
+                    <option th:each="type: ${types}" th:text="${type}" th:value="${type}"></option>
+                </select>
             </div>
             <div class="col-sm-3">
                 <input type="number" class="form-control" id="price-field" name="price" th:value="${plan.price}">
@@ -62,7 +65,10 @@
             <input type="text" class="form-control" name="number">
         </div>
         <div class="col-sm-3">
-            <input type="text" class="form-control" name="type">
+            <select type="text" class="form-control" name="type">
+                <option selected disabled="true"></option>
+                <option th:each="type: ${types}" th:text="${type}" th:value="${type}"></option>
+            </select>
         </div>
         <div class="col-sm-3">
             <input type="number" class="form-control" name="price">

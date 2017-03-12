@@ -5,5 +5,5 @@ package edu.nju.entity;
  */
 public enum RoomType {
 
-    标准间,大床房
+    标准间,大床房,商务间,景观房,家庭房
 }
