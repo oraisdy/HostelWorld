@@ -21,7 +21,7 @@ public class Member {
     private String password;
     private String name;
     private double savings;
-    private int bankCard;
+    private String bankCard;
     private int credit;
     private Date registerAt;
     private Date suspendAt;

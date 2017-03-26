@@ -1,6 +1,7 @@
 package edu.nju.controller;
 
 import edu.nju.config.SecurityConfig;
+import edu.nju.entity.Branch;
 import edu.nju.entity.Member;
 import edu.nju.service.*;
 import edu.nju.vo.Business;
@@ -18,14 +19,21 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * Created by Dora on 2017/3/9.
  */
 @Controller
-@Secured("ROLE_MEMBER")
+@Secured({"ROLE_MEMBER","ROLE_MANAGER"})
 @RequestMapping("/member")
 public class MemberController {
 
+    private final int memberDefault = 1;
     @RequestMapping(value = "/bookRoom")
     public @ResponseBody
     Business book(@ModelAttribute("room") int roomId, @ModelAttribute("range") DateRange range) {
-        return businessService.bookRoom(roomId, getCurrentMember().getId(), range.getFrom(),range.getTo());
+
+        if(getCurrentMember()!= null)
+            return businessService.bookRoom(roomId, getCurrentMember().getId(), range.getFrom(),range.getTo());
+        else if (getBranchByCurrentManager()!=null) {
+            System.out.println("manager");
+            return businessService.bookRoom(roomId, memberDefault, range.getFrom(), range.getTo());
+        }else return null;
     }
 
     @RequestMapping(value = "/bookRoomAndPay")
@@ -47,7 +55,7 @@ public class MemberController {
         Member member = userService.findMember(getCurrentMember().getId());
         member.setBankCard(memberForm.getBankCard());
         userService.saveMember(member);
-        return "redirect:/member/memberModify";
+        return "redirect:/member/modify";
     }
 
     @RequestMapping(value = "/statistics", method = RequestMethod.GET)
@@ -96,9 +104,16 @@ public class MemberController {
     BusinessServiceImpl businessService;
     @Autowired
     BookingServiceImpl bookingService;
+    @Autowired
+    BranchServiceImpl branchService;
 
     private Member getCurrentMember() {
         String username = SecurityConfig.currentUserDetails().getUsername();
         return userService.findMember(username);
+    }
+
+    private Branch getBranchByCurrentManager() {
+        String username = SecurityConfig.currentUserDetails().getUsername();
+        return branchService.findByManagerName(username);
     }
 }

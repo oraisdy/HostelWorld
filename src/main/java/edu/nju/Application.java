@@ -4,12 +4,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
  * Created by Dora on 2017/2/18.
  */
 @SpringBootApplication
+@EnableScheduling
 @EnableJpaRepositories("edu.nju.repository")
 @EntityScan("edu.nju.entity")
 public class Application extends WebMvcConfigurerAdapter {

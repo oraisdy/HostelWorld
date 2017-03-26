@@ -9,13 +9,13 @@ public interface DiscountLevel {
 
     static DiscountLevel decide(int credit) {
 
-        if(credit >= 20000) {
+        if(credit >= 10000) {
             return CreditDiscount.PREMIUM;
 
-        } else if(credit >= 10000) {
+        } else if(credit >= 5000) {
             return CreditDiscount.MIDIUM;
 
-        } else if(credit >= 6000) {
+        } else if(credit >= 2000) {
             return CreditDiscount.PRIMARY;
 
         } else {

@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface BookingRepository extends CrudRepository<Booking, Integer> {
 
-
+    @Query("select b from Booking b where b.member.id=?1 and b.isCancelled=0")
     List<Booking> findByMemberId(Integer member);
 
     @Query("select b from Booking b where b.checkIn=?1 and b.member.id=?2 and b.isCancelled=0")

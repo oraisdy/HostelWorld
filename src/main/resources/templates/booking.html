@@ -127,7 +127,7 @@
             <td th:text=|${stock.info.price}元/天|></td>
             <td th:text="${stock.info.number}"></td>
             <td><a th:attr="roomId=${stock.id}" class="booking" href="#">预订</a></td>
-            <td><a th:attr="roomId=${stock.id}" class="bookAndPay" href="#">预订并付款</a></td>
+            <td sec:authorize="hasRole('ROLE_MEMBER')"><a th:attr="roomId=${stock.id}" class="bookAndPay" href="#">预订并付款</a></td>
         </tr>
         </tbody>
     </table>

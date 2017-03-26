@@ -48,8 +48,8 @@
         <input name="number" th:value="${plan.number}" hidden>
         <label class="col-sm-3 col-form-label"  th:text="${plan.number}"></label>
             <div class="col-sm-3">
-                <select type="text" class="form-control" id="type-field" name="type" >
-                    <option disabled="true" th:text="${plan.type}" th:value="${plan.type}" selected></option>
+                <select type="text" class="form-control" th:value="${type}" id="type-field" name="type" >
+                    <option th:text="${plan.type}" th:value="${plan.type}" selected></option>
                     <option th:each="type: ${types}" th:text="${type}" th:value="${type}"></option>
                 </select>
             </div>

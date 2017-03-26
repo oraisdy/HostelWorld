@@ -76,7 +76,7 @@
             <td th:switch="${booking.bill}">
                 <div th:case="null" >
                     结账:
-                    <a href="" th:attr="bookingId=${booking.id}" class="payByCash" >现金</a>|<a href="" th:attr="bookingId=${booking.id}" class="payByMembership" >会员卡</a>
+                    <a href="" th:attr="bookingId=${booking.id}" class="payByCash" >现金</a><a th:if="${booking.member.id!=1}" href="" th:attr="bookingId=${booking.id}" class="payByMembership" >|会员卡</a>
                 </div>
 
                 <a th:case="*" th:text="'已'+${booking.bill.payment}+'支付'"></a>
